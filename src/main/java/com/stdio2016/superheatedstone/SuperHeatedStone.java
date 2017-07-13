@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -23,15 +25,30 @@ public class SuperHeatedStone
     public static final Item HOT_STONE, HEATED_STONE, LIQUID_STONE, SUPER_HEATED_STONE;
     public static final Item[] items;
 
-    private static Item createItem(String unlocalizedName) {
-        return new Item().setUnlocalizedName(unlocalizedName).setRegistryName(unlocalizedName);
+    public static class HotItem extends Item {
+        public int heat;
+        public HotItem(int temperature) {
+            heat = temperature;
+        }
+        @Override
+        public boolean onLeftClickEntity(ItemStack usedItem, EntityPlayer player, Entity entity) {
+            if (usedItem.getItem() == this && entity != null) {
+                entity.setFire(heat);
+            }
+            return super.onLeftClickEntity(usedItem, player, entity);
+        }
+    }
+
+    // since smelted stones are very hot, all stones in our MOD are actually HotItem and not Block
+    private static Item createItem(int heat, String unlocalizedName) {
+        return new HotItem(heat).setUnlocalizedName(unlocalizedName).setRegistryName(unlocalizedName);
     }
 
     static {
-        HOT_STONE = createItem("hot_stone").setCreativeTab(CreativeTabs.MATERIALS);
-        HEATED_STONE = createItem("heated_stone").setCreativeTab(CreativeTabs.MATERIALS);
-        SUPER_HEATED_STONE = createItem("super_heated_stone").setCreativeTab(CreativeTabs.MATERIALS);
-        LIQUID_STONE = createItem("liquid_stone").setCreativeTab(CreativeTabs.MATERIALS);
+        HOT_STONE = createItem(0, "hot_stone").setCreativeTab(CreativeTabs.MATERIALS);
+        HEATED_STONE = createItem(0, "heated_stone").setCreativeTab(CreativeTabs.MATERIALS);
+        SUPER_HEATED_STONE = createItem(2, "super_heated_stone").setCreativeTab(CreativeTabs.MATERIALS);
+        LIQUID_STONE = createItem(0, "liquid_stone").setCreativeTab(CreativeTabs.MATERIALS);
         items = new Item[] {HOT_STONE, HEATED_STONE, SUPER_HEATED_STONE, LIQUID_STONE};
     }
 
