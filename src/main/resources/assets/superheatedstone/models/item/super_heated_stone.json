@@ -1,0 +1,6 @@
+{
+  "parent":"item/coal",
+  "textures": {
+    "layer0":"superheatedstone:items/super_heated_stone"
+  }
+}
