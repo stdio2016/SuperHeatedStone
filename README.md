@@ -9,4 +9,4 @@ This mod allows you to smelt stone into lava. Because lava is so **<span style='
 
 ## Recipes
 
-Just smelt, smelt, and smelt, you can turn stone into <span style='color:orange;'>magma block</span>. Next, you need our [Strange Recipe MOD](https://github.com/stdio2016/STRecipe) to convert magma to lava.
+Just smelt, smelt, smelt, *and* smelt, you can turn stone into <span style='color:orange;'>magma block</span>. Next, you need our [Strange Recipe MOD](https://github.com/stdio2016/STRecipe) to convert magma to lava.
