@@ -16,18 +16,18 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="hot_stone.svg">
+   sodipodi:docname="super_heated_stone.svg">
   <defs
      id="defs4">
     <linearGradient
        inkscape:collect="always"
        id="linearGradient4138">
       <stop
-         style="stop-color:#f65d5d;stop-opacity:1"
+         style="stop-color:#f5f4fe;stop-opacity:1"
          offset="0"
          id="stop4140" />
       <stop
-         style="stop-color:#763434;stop-opacity:1"
+         style="stop-color:#3052e3;stop-opacity:1"
          offset="1"
          id="stop4142" />
     </linearGradient>
@@ -50,9 +50,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="11.313708"
-     inkscape:cx="-5.709376"
-     inkscape:cy="4.8095022"
+     inkscape:zoom="15.999999"
+     inkscape:cx="-6.9375017"
+     inkscape:cy="5.3553907"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
