@@ -58,7 +58,6 @@ public class SuperHeatedStone
                 if (itemStack.getItem() == HEATED_STONE) return 4 * ONE_BURN;
                 if (itemStack.getItem() == SUPER_HEATED_STONE) return 8 * ONE_BURN;
                 if (itemStack.getItem() == LIQUID_STONE) return 16 * ONE_BURN;
-                if (itemStack.getItem() == Item.getItemFromBlock(Blocks.MAGMA)) return 32 * ONE_BURN;
                 return 0;
             }
         });
