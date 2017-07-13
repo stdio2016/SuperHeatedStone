@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "superheatedstone",
+    "name": "Super Heated Stone",
+    "description": "You can now smelt stone to create lava",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://github.com/stdio2016/SuperHeatedStone",
+    "updateUrl": "",
+    "authorList": ["stdio2016 (Yi-Feng Chen)", "hokomili"],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
