@@ -2,3 +2,4 @@ item.hot_stone.name=Hot Stone
 item.heated_stone.name=Heated Stone
 item.super_heated_stone.name=Super Heated Stone
 item.liquid_stone.name=Liquid Stone
+message.the_stone_so_hot_evaporates_block=The stone is so hot that it evaporates the block it touches!!!

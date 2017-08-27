@@ -1,5 +1,6 @@
 package com.stdio2016.superheatedstone;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -7,8 +8,13 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -27,8 +33,10 @@ public class SuperHeatedStone
 
     public static class HotItem extends Item {
         public int heat;
-        public HotItem(int temperature) {
+        public boolean canEvaporate;
+        public HotItem(int temperature, boolean evaporate) {
             heat = temperature;
+            canEvaporate = evaporate;
         }
         @Override
         public boolean onLeftClickEntity(ItemStack usedItem, EntityPlayer player, Entity entity) {
@@ -37,18 +45,35 @@ public class SuperHeatedStone
             }
             return super.onLeftClickEntity(usedItem, player, entity);
         }
+        @Override
+        public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+            if (canEvaporate) {
+                Block block = world.getBlockState(pos).getBlock();
+                if (!world.isRemote) {
+                    world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                    player.sendMessage(new TextComponentTranslation("message.the_stone_so_hot_evaporates_block"));
+                    world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1.0f);
+                    return EnumActionResult.SUCCESS;
+                }
+                if (world.isRemote) {
+                    for (int i = 0; i < 10; i++)
+                        world.spawnParticle(EnumParticleTypes.LAVA, pos.getX() + .5f, pos.getY() + .5f, pos.getZ() + .5f, 0f, 0f, 0f);
+                }
+            }
+            return EnumActionResult.PASS;
+        }
     }
 
     // since smelted stones are very hot, all stones in our MOD are actually HotItem and not Block
-    private static Item createItem(int heat, String unlocalizedName) {
-        return new HotItem(heat).setUnlocalizedName(unlocalizedName).setRegistryName(unlocalizedName);
+    private static Item createItem(int heat, String unlocalizedName, boolean canEvaporate) {
+        return new HotItem(heat, canEvaporate).setUnlocalizedName(unlocalizedName).setRegistryName(unlocalizedName);
     }
 
     static {
-        HOT_STONE = createItem(0, "hot_stone").setCreativeTab(CreativeTabs.MATERIALS);
-        HEATED_STONE = createItem(0, "heated_stone").setCreativeTab(CreativeTabs.MATERIALS);
-        SUPER_HEATED_STONE = createItem(2, "super_heated_stone").setCreativeTab(CreativeTabs.MATERIALS);
-        LIQUID_STONE = createItem(0, "liquid_stone").setCreativeTab(CreativeTabs.MATERIALS);
+        HOT_STONE = createItem(0, "hot_stone", false).setCreativeTab(CreativeTabs.MATERIALS);
+        HEATED_STONE = createItem(0, "heated_stone", false).setCreativeTab(CreativeTabs.MATERIALS);
+        SUPER_HEATED_STONE = createItem(2, "super_heated_stone", false).setCreativeTab(CreativeTabs.MATERIALS);
+        LIQUID_STONE = createItem(0, "liquid_stone", true).setCreativeTab(CreativeTabs.MATERIALS);
         items = new Item[] {HOT_STONE, HEATED_STONE, SUPER_HEATED_STONE, LIQUID_STONE};
     }
 

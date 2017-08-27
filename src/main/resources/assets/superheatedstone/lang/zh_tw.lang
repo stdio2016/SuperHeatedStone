@@ -1,0 +1,5 @@
+item.hot_stone.name=熱石
+item.heated_stone.name=燙石
+item.super_heated_stone.name=過熱石
+item.liquid_stone.name=液態石
+message.the_stone_so_hot_evaporates_block=這顆石頭熱到把它接觸的方塊給蒸發了！！！
