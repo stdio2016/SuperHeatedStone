@@ -53,11 +53,13 @@ public class SuperHeatedStone
         public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
             if (canEvaporate) {
                 Block block = world.getBlockState(pos).getBlock();
-                if (!world.isRemote && pos.getY() > 0) {
+                if (pos.getY() > 0) {
                     world.setBlockState(pos, Blocks.AIR.getDefaultState());
-                    player.sendMessage(new TextComponentTranslation("message.the_stone_so_hot_evaporates_block"));
-                    world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1.0f);
-                    simpleNetworkWrapper.sendToDimension(new VaporMessage(pos.getX(), pos.getY(), pos.getZ()), player.dimension);
+                    if (!world.isRemote) {
+                        player.sendMessage(new TextComponentTranslation("message.the_stone_so_hot_evaporates_block"));
+                        world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1.0f);
+                        simpleNetworkWrapper.sendToDimension(new VaporMessage(pos.getX(), pos.getY(), pos.getZ()), player.dimension);
+                    }
                     return EnumActionResult.SUCCESS;
                 }
             }
