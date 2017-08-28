@@ -20,6 +20,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -30,6 +32,8 @@ public class SuperHeatedStone
     public static final String VERSION = "1.0";
     public static final Item HOT_STONE, HEATED_STONE, LIQUID_STONE, SUPER_HEATED_STONE;
     public static final Item[] items;
+    public static final byte SOCKET_ID = 35;
+    private static SimpleNetworkWrapper simpleNetworkWrapper;
 
     public static class HotItem extends Item {
         public int heat;
@@ -53,11 +57,8 @@ public class SuperHeatedStone
                     world.setBlockState(pos, Blocks.AIR.getDefaultState());
                     player.sendMessage(new TextComponentTranslation("message.the_stone_so_hot_evaporates_block"));
                     world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1.0f);
+                    simpleNetworkWrapper.sendToDimension(new VaporMessage(pos.getX(), pos.getY(), pos.getZ()), player.dimension);
                     return EnumActionResult.SUCCESS;
-                }
-                if (world.isRemote) {
-                    for (int i = 0; i < 10; i++)
-                        world.spawnParticle(EnumParticleTypes.LAVA, pos.getX() + .5f, pos.getY() + .5f, pos.getZ() + .5f, 0f, 0f, 0f);
                 }
             }
             return EnumActionResult.PASS;
@@ -81,6 +82,12 @@ public class SuperHeatedStone
     public void preInit(FMLPreInitializationEvent event) {
         for (Item item : items) {
             GameRegistry.register(item);
+        }
+        simpleNetworkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("SuperHeatedChannel");
+        simpleNetworkWrapper.registerMessage(VaporHandler.dummy.class, VaporMessage.class,
+                SuperHeatedStone.SOCKET_ID, Side.SERVER);
+        if (event.getSide() == Side.CLIENT) {
+            simpleNetworkWrapper.registerMessage(VaporHandler.class, VaporMessage.class, SuperHeatedStone.SOCKET_ID, Side.CLIENT);
         }
     }
 
