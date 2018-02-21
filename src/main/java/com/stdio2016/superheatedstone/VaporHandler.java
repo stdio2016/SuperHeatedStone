@@ -36,6 +36,6 @@ public class VaporHandler implements IMessageHandler<VaporMessage, IMessage> {
     private void processMessage(WorldClient world, VaporMessage msg) {
         Vec3d pos = msg.pos;
         for (int i = 0; i < 10; i++)
-            world.spawnParticle(EnumParticleTypes.LAVA, pos.xCoord + .5f, pos.yCoord + .5f, pos.zCoord + .5f, 0f, 0f, 0f);
+            world.spawnParticle(EnumParticleTypes.LAVA, pos.x + .5f, pos.y + .5f, pos.z + .5f, 0f, 0f, 0f);
     }
 }

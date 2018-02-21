@@ -35,8 +35,8 @@ public class VaporMessage implements IMessage {
     @Override
     public void toBytes(ByteBuf byteBuf) {
         if (!isValid) return ;
-        byteBuf.writeDouble(pos.xCoord);
-        byteBuf.writeDouble(pos.yCoord);
-        byteBuf.writeDouble(pos.zCoord);
+        byteBuf.writeDouble(pos.x);
+        byteBuf.writeDouble(pos.y);
+        byteBuf.writeDouble(pos.z);
     }
 }

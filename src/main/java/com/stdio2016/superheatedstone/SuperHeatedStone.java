@@ -15,7 +15,6 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -24,6 +23,10 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 
 @Mod(modid = SuperHeatedStone.MODID, version = SuperHeatedStone.VERSION)
 public class SuperHeatedStone
@@ -65,6 +68,15 @@ public class SuperHeatedStone
             }
             return EnumActionResult.PASS;
         }
+
+        public int getItemBurnTime(ItemStack itemStack) {
+            final int ONE_BURN = 200;
+            if (itemStack.getItem() == HOT_STONE) return 2 * ONE_BURN;
+            if (itemStack.getItem() == HEATED_STONE) return 4 * ONE_BURN;
+            if (itemStack.getItem() == SUPER_HEATED_STONE) return 8 * ONE_BURN;
+            if (itemStack.getItem() == LIQUID_STONE) return 16 * ONE_BURN;
+            return 0;
+        }
     }
 
     // since smelted stones are very hot, all stones in our MOD are actually HotItem and not Block
@@ -82,14 +94,20 @@ public class SuperHeatedStone
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        for (Item item : items) {
-            GameRegistry.register(item);
-        }
         simpleNetworkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("SuperHeatedChannel");
         simpleNetworkWrapper.registerMessage(VaporHandler.dummy.class, VaporMessage.class,
                 SuperHeatedStone.SOCKET_ID, Side.SERVER);
         if (event.getSide() == Side.CLIENT) {
             simpleNetworkWrapper.registerMessage(VaporHandler.class, VaporMessage.class, SuperHeatedStone.SOCKET_ID, Side.CLIENT);
+        }
+        MinecraftForge.EVENT_BUS.register(SuperHeatedStone.class);
+    }
+
+    @SubscribeEvent
+    public static void registerItems(final RegistryEvent.Register<Item> event) {
+        final IForgeRegistry<Item> reg = event.getRegistry();
+        for (Item i : items) {
+            reg.register(i);
         }
     }
 
@@ -101,22 +119,13 @@ public class SuperHeatedStone
         GameRegistry.addSmelting(HEATED_STONE, new ItemStack(SUPER_HEATED_STONE), 0.1f);
         GameRegistry.addSmelting(SUPER_HEATED_STONE, new ItemStack(LIQUID_STONE), 0.1f);
         GameRegistry.addSmelting(LIQUID_STONE, new ItemStack(Blocks.MAGMA), 0.1f);
-        GameRegistry.registerFuelHandler(new IFuelHandler() {
-            @Override
-            public int getBurnTime(ItemStack itemStack) {
-                final int ONE_BURN = 200;
-                if (itemStack.getItem() == HOT_STONE) return 2 * ONE_BURN;
-                if (itemStack.getItem() == HEATED_STONE) return 4 * ONE_BURN;
-                if (itemStack.getItem() == SUPER_HEATED_STONE) return 8 * ONE_BURN;
-                if (itemStack.getItem() == LIQUID_STONE) return 16 * ONE_BURN;
-                return 0;
-            }
-        });
     }
 
     private void addImageForItem(Item item) {
         ItemModelMesher modelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
-        modelMesher.register(item, 0, new ModelResourceLocation(this.MODID+":"+item.getUnlocalizedName().substring(5), "inventory"));
+        String path = this.MODID+":"+item.getUnlocalizedName().substring(5);
+        ModelResourceLocation res = new ModelResourceLocation(path, "inventory");
+        modelMesher.register(item, 0, res);
     }
 
     @EventHandler
